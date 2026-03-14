@@ -30,8 +30,17 @@ const connectDatabase = async () => {
 
 
 
+// app.use(cors({
+//     origin: true,
+//     methods: ["GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"],
+//     credentials: true,
+//     allowedHeaders: ["Content-Type", "Authorization"]
+// }));
+
+
+
 app.use(cors({
-    origin: true,
+    origin: 'https://www.hopeadsolutions.com', // only your frontend
     methods: ["GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"],
     credentials: true,
     allowedHeaders: ["Content-Type", "Authorization"]
