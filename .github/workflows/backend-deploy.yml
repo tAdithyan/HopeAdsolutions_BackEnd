@@ -45,7 +45,7 @@ jobs:
           username: ${{ secrets.DO_USERNAME }}
           key: ${{ secrets.DO_SSH_KEY }}
           source: "src,package.json,package-lock.json"
-          target: "/root/Hopeadsolutions_BackEnd"
+          target: "/root/HopeAdsolutions_BackEnd"
 
       - name: Restart backend
         uses: appleboy/ssh-action@v1.2.0
@@ -54,7 +54,7 @@ jobs:
           username: ${{ secrets.DO_USERNAME }}
           key: ${{ secrets.DO_SSH_KEY }}
           script: |
-            cd /root/Hopeadsolutions_BackEnd
+            cd /root/HopeAdsolutions_BackEnd
             npm ci --omit=dev
             pm2 restart hopead-api --update-env
             pm2 save
