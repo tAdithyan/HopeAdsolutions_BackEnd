@@ -8,6 +8,7 @@ const authRoutes = require('./auth');
 const dashboardRoutes = require('./dashboard');
 const analyticsRoutes = require('./analytics');
 const clientRoutes = require('./client');
+const mediaRoutes = require('./media');
 const { protect } = require('../middleware/authMiddleware');
 
 
@@ -59,5 +60,6 @@ router.use('/auth', authRoutes);
 router.use('/dashboard', protect, dashboardRoutes);
 router.use('/analytics', analyticsRoutes);
 router.use('/clients', clientRoutes);
+router.use('/media', mediaRoutes);
 
 module.exports = router;

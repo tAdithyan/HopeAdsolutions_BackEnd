@@ -40,7 +40,20 @@ const connectDatabase = async () => {
 
 
 app.use(cors({
-    origin: 'https://www.hopeadsolutions.com', // only your frontend
+    origin: function (origin, callback) {
+        const allowedOrigins = [
+            'http://localhost:5173',
+            'http://localhost:3000',
+            'https://www.hopeadsolutions.com',
+            'https://hopeadsolutions.com',
+        ];
+        // Allow requests with no origin (like mobile apps, curl, Postman)
+        if (!origin || allowedOrigins.includes(origin)) {
+            callback(null, true);
+        } else {
+            callback(new Error('Not allowed by CORS'));
+        }
+    },
     methods: ["GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"],
     credentials: true,
     allowedHeaders: ["Content-Type", "Authorization"]

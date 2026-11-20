@@ -7,23 +7,53 @@ cloudinary.config({
     api_secret: process.env.CLOUDINARY_API_SECRET,
 });
 
+const IMAGE_FORMATS = ['jpg', 'png', 'jpeg', 'webp', 'gif'];
+const VIDEO_FORMATS = ['mp4', 'mov', 'webm'];
+
 const storage = new CloudinaryStorage({
     cloudinary: cloudinary,
-    params: {
-        folder: 'billford-ads',
-        allowed_formats: ['jpg', 'png', 'jpeg', 'webp'],
-        transformation: [{ width: 1000, height: 1000, crop: 'limit' }],
+    params: async (req, file) => {
+        const isVideo = file.mimetype.startsWith('video/');
+
+        if (isVideo) {
+            return {
+                folder: 'Hopeadsolutions-ads',
+                // Without resource_type "video" Cloudinary treats the file as an
+                // image and rejects it: "Image file format mp4 not allowed"
+                resource_type: 'video',
+                allowed_formats: VIDEO_FORMATS,
+            };
+        }
+
+        return {
+            folder: 'Hopeadsolutions-ads',
+            resource_type: 'image',
+            allowed_formats: IMAGE_FORMATS,
+            // Resize only images, never videos
+            transformation: [{ width: 1000, height: 1000, crop: 'limit' }],
+        };
     },
 });
 
-const deleteFromCloudinary = async (imageUrl) => {
-    if (!imageUrl) return;
+const deleteFromCloudinary = async (mediaUrl) => {
+    if (!mediaUrl) return;
     try {
-        const parts = imageUrl.split('/');
+        const parts = mediaUrl.split('/');
         const uploadIndex = parts.indexOf('upload');
         if (uploadIndex !== -1) {
-            const publicId = parts.slice(uploadIndex + 2).join('/').split('.')[0];
-            await cloudinary.uploader.destroy(publicId);
+            const publicId = parts
+                .slice(uploadIndex + 2)
+                .join('/')
+                .replace(/\.[^/.]+$/, ''); // strip only the file extension
+
+            // Videos must be destroyed with resource_type "video"
+            const resourceType = mediaUrl.includes('/video/upload/')
+                ? 'video'
+                : 'image';
+
+            await cloudinary.uploader.destroy(publicId, {
+                resource_type: resourceType,
+            });
         }
     } catch (error) {
         console.error('Error deleting from Cloudinary:', error);
